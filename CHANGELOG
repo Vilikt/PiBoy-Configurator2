@@ -1,0 +1,29 @@
+# 1.3.3
+- Fix on error when reading option in piboy.cfg
+- Add Update option in general menu
+- Add transparent icon for the Retropie menu
+
+# 1.3.2
+- Fix Issue #1 : Error on boot due to ONBOARD_CONTROLLER_HDMI and /opt/retropie/configs/all/emulationstation/piboy_es_input
+
+# 1.3.1
+- Fix multpile values for LED intensity in osd.cfg
+
+# 1.3.0
+- Compatible with OSD v1.0.3, now osd.cf is located in /boot/
+- Fix LED green and red settings
+- Add default Bluetooth and WiFI toggle on each mode
+- Change Bluetooth toggle protocol
+- Add screen overscan setting
+- autocreate piboy.cfg if missed
+
+# 1.2.0
+- Add switch to toggle Onboard PiBoy controller on HDMI
+
+# 1.1.0
+- Fix error for switching some options of OSD.
+- Install process now create piboy.cfg if not exists. So, git pull not overwrite the file anymore.
+- add CHANGELOG file.
+
+# 1.0.0
+- Initial release.
