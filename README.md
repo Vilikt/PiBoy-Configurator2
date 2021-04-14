@@ -11,12 +11,12 @@
   Connect on SSH to your Pi and type the following commands :
   
     cd /home/pi
-    git clone https://github.com/Vilikt/PiBoy-Configurator.git
+    git clone https://github.com/Vilikt/PiBoy-Configurator2.git ./PiBoy-Configurator
     cd PiBoy-Configurator
     sudo python install.py
 
 ## 1.2 SFTP
-  You may don't wan to use SSH. So you can download the sources and upload the Piboy-Configurator folder on /home/pi with FileZilla, WinSCP or something else.
+  You may don't want to use SSH. So you can download the sources and upload the Piboy-Configurator folder on /home/pi with FileZilla, WinSCP or something else.
   Then turn on your Piboy and connect a keyboard. Once you are in EmulationStation, press F4 key to get in the command prompt. Then type the following commands :
 
     cd /home/pi/PiBoy-Configurator
