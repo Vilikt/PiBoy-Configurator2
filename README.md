@@ -1,4 +1,4 @@
-# PIBOY-CONFIGURATOR version 1.3.3
+# PIBOY-CONFIGURATOR version 1.3.4
 
 # Special Thanks
 
