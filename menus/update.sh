@@ -12,4 +12,6 @@ git pull
 
 source $PIBOYCONF_ROOT_FOLDER/common.sh >/dev/null 2>&1
 
+rm -Rf /home/pi/PiBoy-Configurator/Retropie
+
 sudo python $PIBOYCONF_ROOT_FOLDER/install.py --force

@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import os
+import pwd
+import grp
 import xml.etree.ElementTree as ET
 import subprocess
 
@@ -16,11 +18,12 @@ OVERLAYS_TV_FOLDER = OVERLAYS_FOLDER + "TV/"
 OVERLAYS_TV_CLEAN_FOLDER = OVERLAYS_TV_FOLDER + "clean/"
 OVERLAYS_TV_GRID_FOLDER = OVERLAYS_TV_FOLDER + "grid/"
 RETROPIE_MENU_FOLDER = "/home/pi/RetroPie/retropiemenu/"
+RETROPIE_MENU_GAMELIST_FOLDER = "/opt/retropie/configs/all/emulationstation/gamelists/retropie/"
 
 PIBOY_SCRIPTNAME_MENU = "./PiBoy-Configurator.sh"
 PIBOY_NAME_MENU = "PiBoy Configuration"
 PIBOY_DESC_MENU = "Change the PiBoy options."
-PIBOY_DESC_IMAGE = "./icons/PiBoy-Configurator.png"
+PIBOY_IMAGE = RETROPIE_MENU_FOLDER + "icons/PiBoy-Configurator.png"
 PIBOY_CONTROLLER_NAME = "PiBoy DMG Controller"
 
 BOOT_CONFIG_FILE = "/boot/config.txt"
@@ -87,18 +90,21 @@ def setOptionFromPiboyconfFile(option, value):
 			return 0
 
 def checkPiboyConfiguratorEntryExists():
-	path = RETROPIE_MENU_FOLDER + 'gamelist.xml'
+	path = RETROPIE_MENU_GAMELIST_FOLDER + 'gamelist.xml'
 	
 	# check if config file exits
 	if (not os.path.exists(path)):
-		return -1
+		path = RETROPIE_MENU_FOLDER + 'gamelist.xml'
+		if (not os.path.exists(path)):
+			return -1
 		
 	treeOptions = ET.parse(path)
 	gamelist = treeOptions.getroot()
+	
 	for game in gamelist:
 		if (game.find('name').text == PIBOY_NAME_MENU):
 			return True
-	
+
 	return False
 
 def indent(elem, level=0):
@@ -148,6 +154,8 @@ def createPiboyCfg():
 	overscan_enable.text = "no"
 	overscan_value = ET.Element("overscan_value")
 	overscan_value.text = "0"
+	vol_icon_set = ET.Element("vol_icon_set")
+	vol_icon_set.text = "original"
 	
 	piboycfg.insert(0, overlay_style)
 	piboycfg.insert(0, wifi_enable)
@@ -161,6 +169,7 @@ def createPiboyCfg():
 	piboycfg.insert(0, bt_always_enable_lcd)
 	piboycfg.insert(0, overscan_enable)
 	piboycfg.insert(0, overscan_value)
+	piboycfg.insert(0, vol_icon_set)
 	
 	indent(piboycfg)
 	
@@ -171,11 +180,13 @@ def createPiboyCfg():
 	os.chown(path, uid, gid)
 	
 def addRetropieMenuEntry():
-	path = RETROPIE_MENU_FOLDER + 'gamelist.xml'
+	path = RETROPIE_MENU_GAMELIST_FOLDER + 'gamelist.xml'
 	
 	# check if config file exits
 	if (not os.path.exists(path)):
-		return -1
+		path = RETROPIE_MENU_FOLDER + 'gamelist.xml'
+		if (not os.path.exists(path)):
+			return -1
 		
 	treeOptions = ET.parse(path)
 	gamelist = treeOptions.getroot()
@@ -195,10 +206,31 @@ def addRetropieMenuEntry():
 	piboyEntry.insert(2, desc)
 	
 	image = ET.Element("image")
-	image.text = PIBOY_DESC_IMAGE
+	image.text = PIBOY_IMAGE
 	piboyEntry.insert(3, image)
 	
+	print(ET.tostring(piboyEntry).decode())
+	
 	gamelist.insert(0, piboyEntry)
+	
+	indent(gamelist)
+	treeOptions.write(path, encoding="utf-8", xml_declaration=True)
+	
+def removeRetropieMenuEntry():
+	path = RETROPIE_MENU_GAMELIST_FOLDER + 'gamelist.xml'
+	
+	# check if config file exits
+	if (not os.path.exists(path)):
+		path = RETROPIE_MENU_FOLDER + 'gamelist.xml'
+		if (not os.path.exists(path)):
+			return -1
+		
+	treeOptions = ET.parse(path)
+	gamelist = treeOptions.getroot()
+	
+	for game in gamelist:
+		if (game.find('name').text == PIBOY_NAME_MENU):
+			gamelist.remove(game)
 	
 	indent(gamelist)
 	treeOptions.write(path, encoding="utf-8", xml_declaration=True)
@@ -214,6 +246,8 @@ def copyFileWithAnotherName(path, newPath):
 	
 	newFile = open(newPath, 'w')
 	newFile.writelines(lines)
+	
+	os.chown(newPath, pwd.getpwnam("pi").pw_uid, grp.getgrnam("pi").gr_gid)
 
 def createRetroarchCfg():
 	print("\nNow manage retroarch configurations files in " + CONFIGS_ROOT_FOLDER)
@@ -329,7 +363,28 @@ def addAutoconfigToRcLocal():
 			print("Please run this script as Root : sudo python install.py")
 	else:
 		print("The line is already in rc.local")
-		
+
+def removeAutoconfigToRcLocal():
+	print("\nNow manage to remove autoconfig.py execution in rc.local")
+	
+	rcLocalFile = open("/etc/rc.local", 'r')
+	lines = rcLocalFile.readlines()
+	rcLocalFile.close()
+	
+	newLines = []
+	
+	for line in lines:
+		if line.strip() != "sudo python /home/pi/PiBoy-Configurator/autoconfig.py":
+			newLines.append(line.strip()+"\n")
+			
+	try :
+		rcLocalFile = open("/etc/rc.local", 'w')
+		rcLocalFile.writelines(newLines)
+		rcLocalFile.close()
+		print("The line was successfully removed in rc.local")
+	except IOError:
+		print("Please run this script as Root : sudo python install.py")
+
 def addOverscan():
 	bootConfigFile = open(BOOT_CONFIG_FILE, 'r')
 	lines = bootConfigFile.readlines()

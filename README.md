@@ -1,9 +1,12 @@
-# PIBOY-CONFIGURATOR version 1.3.4
+# PIBOY-CONFIGURATOR version 1.3.5
 
 # Special Thanks
 
+
 - __Richard Capewell__ for the Retropie Menu icon
 - __DrBuns3n__ for having the patience to point out problems at start-up and offer relevant suggestions
+- __Alex Rodriguez__ to have created the different volume images set, and to have given his authorization to integrate them into the project
+- __Grow YourOwn__ for his supports
 
 # 1. Installation
 
@@ -134,7 +137,7 @@ On startup the autoconfig.py is executed and it replaces each retroarch.cfg file
   A new entry named "PiBoy Configuration" is created in RetropieMenu.
   If you select it you will go on the principal menu "General Settings" :
   
-  ![Alt text](https://i.imgur.com/GmsQhPf.png "General Settings")
+  ![Alt text](https://i.imgur.com/LvfFBo2.png "General Settings")
   
 ## 5.1 Update
 

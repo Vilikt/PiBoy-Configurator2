@@ -30,11 +30,15 @@ if (not ("--only_create_conf_file" in sys.argv)):
 	subprocess.call(['sh', './install.sh'])
 
 	# add PiBoy configurator entry in Retropie menu if needed
-	if (tools.checkPiboyConfiguratorEntryExists() == False):
+	res = tools.checkPiboyConfiguratorEntryExists()
+	
+	if (res == False):
 		print("Add Retropie Menu entry")
 		tools.addRetropieMenuEntry()
-	else:
+	elif (res == True):
 		print("Retropie Menu entry already exits")
+	elif (res == -1):
+		print("ERROR : File gamelist does not exists...")
 		
 	# create retroarch.cfg.tv and retroarch.cfg.lcd in all systems config folder if needed
 	tools.createRetroarchCfg()

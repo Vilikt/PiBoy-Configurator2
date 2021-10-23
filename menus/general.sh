@@ -22,12 +22,14 @@ function main_menu() {
 			"osd_configuration" "3 OSD" \
 			"green_led_setting" "4 Green LED setting" \
 			"red_led_setting" "5 Red LED setting" \
-			"toggle_wifi" "6 Wifi Toggle" \
-			"toggle_bluetooth" "7 Bluetooth Toggle" \
-			"theme_lcd" "8 Set ES Theme on LCD mode" \
-			"theme_tv" "9 Set ES Theme on TV mode" \
-			"onboard_controller" "10 Set onboard controller behavior" \
-			"overscan" "11 Set screen overscan on TV mode" \
+			"volume_icons_set" "6 Volume icons" \
+			"toggle_wifi" "7 Wifi Toggle" \
+			"toggle_bluetooth" "8 Bluetooth Toggle" \
+			"theme_lcd" "9 Set ES Theme on LCD mode" \
+			"theme_tv" "10 Set ES Theme on TV mode" \
+			"onboard_controller" "11 Set onboard controller behavior" \
+			"overscan" "12 Set screen overscan on TV mode" \
+			"uninstall" "13 Uninstall PiBoy-Configurator" \
             2>&1 > /dev/tty)
 		
 		opt=$?
