@@ -1,6 +1,7 @@
 # 1.3.5
 - Add multiple volume icons sets and menu to select them
 - Add uninstall function
+- Fix problem to set the "load" icon
 
 # 1.3.4
 - Change all files format to UNIX (LF). Should fix launch errors.
