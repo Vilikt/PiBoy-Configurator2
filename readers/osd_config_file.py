@@ -25,7 +25,7 @@ if action == "set":
 	for line in lines:
 		if ignore_next == False:
 			if type == "comment":
-				if line.strip().endswith(paramToSearch):
+				if line.strip() == paramToSearch or line.strip() == '#'+paramToSearch:
 					if value == 'yes':
 						line = paramToSearch
 					elif value == 'no':
@@ -47,7 +47,7 @@ elif action == "get":
 	for line in lines:
 		line_index += 1
 		if type == "comment":
-			if line.strip().endswith(paramToSearch):
+			if line.strip() == paramToSearch or line.strip() == '#'+paramToSearch:
 				if line.strip().startswith('#'):
 					print("no")
 				else:

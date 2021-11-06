@@ -1,59 +1,64 @@
+import subprocess
+import xml.etree.ElementTree as ET
 import os
 import sys
 
-PIBOY_OSD_ROOT_FOLDER = "/home/pi/osd/"
-OSD_CONFIG_FILE = "/boot/osd.cfg"
+autoconfigCfgPath = "/home/pi/PiBoy-Configurator/piboy.cfg"
 
-osdConfigFile = open(OSD_CONFIG_FILE, 'r')
-lines = osdConfigFile.readlines()
-osdConfigFile.close()
+def indent(elem, level=0):
+	i = "\n" + level*"  "
+	if len(elem):
+		if not elem.text or not elem.text.strip():
+			elem.text = i + "  "
+		if not elem.tail or not elem.tail.strip():
+			elem.tail = i
+		for elem in elem:
+			indent(elem, level+1)
+		if not elem.tail or not elem.tail.strip():
+			elem.tail = i
+	else:
+		if level and (not elem.tail or not elem.tail.strip()):
+			elem.tail = i
 
-paramToSearch = str(sys.argv[1])
-type = str(sys.argv[2])
-action = str(sys.argv[3])
+def main():
+	param = str(sys.argv[1])
+	action = str(sys.argv[2])
 
-if action == "set":
-	try:
-		sys.argv[4]
-		value = str(sys.argv[4])
-	except IndexError:
-		value = str(os.environ["choice"])
+	if action == "set":
+		try:
+			sys.argv[3]
+			value = str(sys.argv[3])
+		except IndexError:
+			value = str(os.environ["choice"])
 
-	newLines = []
-	ignore_next = False
+		treeOptions = ET.parse(autoconfigCfgPath)
+		root = treeOptions.getroot()
+		for child in root:
+			if (child.tag == param):
+				child.text = value
+				treeOptions.write(autoconfigCfgPath)
+				os.system("sudo python /home/pi/PiBoy-Configurator/autoconfig.py")
+				sys.exit(0)
 
-	for line in lines:
-		if ignore_next == False:
-			if type == "comment":
-				if line.strip() == paramToSearch or line.strip() == '#'+paramToSearch:
-					if value == 'yes':
-						line = paramToSearch
-					elif value == 'no':
-						line = '#'+paramToSearch
-			elif type == "value_below":
-				if line.strip().startswith(paramToSearch):
-					line = paramToSearch + "\n" + value
-					ignore_next = True
-			
-			newLines.append(line.strip()+"\n")
-		else:
-			ignore_next = False
-	
-	osdConfigFile = open(OSD_CONFIG_FILE, 'w')
-	osdConfigFile.writelines(newLines)
-	osdConfigFile.close()
-elif action == "get":
-	line_index = -1
-	for line in lines:
-		line_index += 1
-		if type == "comment":
-			if line.strip() == paramToSearch or line.strip() == '#'+paramToSearch:
-				if line.strip().startswith('#'):
-					print("no")
-				else:
-					print("yes")
-		elif type == "value_below":
-			if line.strip().startswith(paramToSearch):
-				print(lines[line_index+1].replace(paramToSearch,"").strip())
-			
-sys.exit(0)
+		# element not exists --> create it
+		elt = ET.Element(param)
+		elt.text = value
+		root.insert(0, elt)
+		indent(root)
+		treeOptions.write(autoconfigCfgPath)
+		sys.exit(0)
+
+	elif action == "get":
+		treeOptions = ET.parse(autoconfigCfgPath)
+		root = treeOptions.getroot()
+		for child in root:
+			if (child.tag == param):
+				print(child.text)
+				sys.exit(0)
+
+		# element not exists --> return 0
+		print(0)
+		sys.exit(0)
+
+if __name__ == "__main__":
+    x= main()
